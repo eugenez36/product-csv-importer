@@ -16,8 +16,13 @@ class CSVRowValidator extends CSVConstants
             return $processedRow;
         }
 
-        return $this->convertValues($processedRow);
+        return $this->convertValues($this->combineRow($row));
 
+    }
+
+    private function combineRow(array $row): array
+    {
+        return ['data' => array_combine(self::PRODUCT_HEADER_LIST, $row), 'errors' => []];
     }
 
     /**
@@ -27,34 +32,34 @@ class CSVRowValidator extends CSVConstants
     private function convertValues(array $row): array
     {
         // Convert product code
-        if (empty($row['data'][0])) {
+        if (empty($row['data'][self::PRODUCT_CODE_HEADER])) {
             $row['errors'][] = "Field [" . self::PRODUCT_CODE_HEADER . "] empty or null";
         } else {
-            $row['data'][0] = trim((string)$row['data'][0]);
+            $row['data'][self::PRODUCT_CODE_HEADER] = trim((string)$row['data'][self::PRODUCT_CODE_HEADER]);
         }
 
         // Convert Product name
-        $row['data'][1] = trim((string)$row['data'][1]);
+        $row['data'][self::PRODUCT_NAME_HEADER] = trim((string)$row['data'][self::PRODUCT_NAME_HEADER]);
 
         // Convert Product description
-        $row['data'][2] = trim((string)$row['data'][2]);
+        $row['data'][self::PRODUCT_DESCRIPTION_HEADER] = trim((string)$row['data'][self::PRODUCT_DESCRIPTION_HEADER]);
 
         // Convert Product quantity
-        if (!is_numeric($row['data'][3])) {
+        if (!is_numeric($row['data'][self::PRODUCT_QUANTITY_HEADER])) {
             $row['errors'][] = "Field [" . self::PRODUCT_QUANTITY_HEADER . "] is not a number";
         } else {
-            $row['data'][3] = (int)$row['data'][3];
+            $row['data'][self::PRODUCT_QUANTITY_HEADER] = (int)$row['data'][self::PRODUCT_QUANTITY_HEADER];
         }
 
         // Convert Product price
-        if (!is_numeric($row['data'][4])) {
+        if (!is_numeric($row['data'][self::PRODUCT_PRICE_HEADER])) {
             $row['errors'][] = "Field [" . self::PRODUCT_PRICE_HEADER . "] is not a number";
         } else {
-            $row['data'][4] = (float)$row['data'][4];
+            $row['data'][self::PRODUCT_PRICE_HEADER] = (float)$row['data'][self::PRODUCT_PRICE_HEADER];
         }
 
         // Convert Product Discounted
-        $row['data'][5] = $row['data'][5] == 'yes' ? 1 : 0;
+        $row['data'][self::PRODUCT_DISCONTINUED_HEADER] = $row['data'][self::PRODUCT_DISCONTINUED_HEADER] == 'yes' ? 1 : 0;
 
         return $row;
     }

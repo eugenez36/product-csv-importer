@@ -21,12 +21,12 @@ class CSVRowValidatorTest extends TestCase
         $row = ['P0001', 'TV', 'Prod description', '10', '124.22', 'yes'];
         $result = $this->validator->validateRow($this->headers, $row);
 
-        $this->assertEquals('P0001', $result['data'][0]);
-        $this->assertEquals('TV', $result['data'][1]);
-        $this->assertEquals('Prod description', $result['data'][2]);
-        $this->assertEquals(10, $result['data'][3]);
-        $this->assertEquals(124.22, $result['data'][4]);
-        $this->assertEquals(1, $result['data'][5]);
+        $this->assertEquals('P0001', $result['data'][CSVConstants::PRODUCT_CODE_HEADER]);
+        $this->assertEquals('TV', $result['data'][CSVConstants::PRODUCT_NAME_HEADER]);
+        $this->assertEquals('Prod description', $result['data'][CSVConstants::PRODUCT_DESCRIPTION_HEADER]);
+        $this->assertEquals(10, $result['data'][CSVConstants::PRODUCT_QUANTITY_HEADER]);
+        $this->assertEquals(124.22, $result['data'][CSVConstants::PRODUCT_PRICE_HEADER]);
+        $this->assertEquals(1, $result['data'][CSVConstants::PRODUCT_DISCONTINUED_HEADER]);
     }
 
     public function testValidateRowWithAllInvalidData(): void
