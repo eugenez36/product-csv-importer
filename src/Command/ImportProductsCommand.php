@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Exception\InvalidDataException;
 use App\Exception\InvalidFileException;
+use App\Service\Import\CSV\CSVConstants;
 use App\Service\Import\CSV\CSVFileValidator;
 use App\Service\Import\CSV\CSVReader;
 use App\Service\Import\CSV\CSVRowValidator;
@@ -76,7 +77,14 @@ class ImportProductsCommand extends Command
                 try {
                     $item = $this->rowValidator->validateRow($headers, $row);
                     if (count($item['errors']) === 0) {
-                        $productDTO = new ProductDTO($item['data'][0], $item['data'][1], $item['data'][2], $item['data'][3], $item['data'][4], (bool)$item['data'][5]);
+                        $productDTO = new ProductDTO(
+                            $item['data'][CSVConstants::PRODUCT_CODE_HEADER],
+                            $item['data'][CSVConstants::PRODUCT_NAME_HEADER],
+                            $item['data'][CSVConstants::PRODUCT_DESCRIPTION_HEADER],
+                            $item['data'][CSVConstants::PRODUCT_QUANTITY_HEADER],
+                            $item['data'][CSVConstants::PRODUCT_PRICE_HEADER],
+                            (bool)$item['data'][CSVConstants::PRODUCT_DISCONTINUED_HEADER]
+                        );
                         if ($productDTO->isValid()) {
                             $this->productImporter->importProduct($productDTO, $result, $testMode);
                         } else {
