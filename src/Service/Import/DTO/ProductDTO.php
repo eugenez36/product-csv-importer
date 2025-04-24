@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\DTO;
+namespace App\Service\Import\DTO;
 
 class ProductDTO
 {
@@ -20,8 +20,8 @@ class ProductDTO
         $this->code = $code;
         $this->name = $name;
         $this->description = $description;
-        $this->stock = $this->setCost($cost);
-        $this->cost = $this->setStock($stock);
+        $this->stock = $this->setStock($stock);
+        $this->cost = $this->setCost($cost);
         $this->discontinued = $discontinued;
     }
 
@@ -87,17 +87,17 @@ class ProductDTO
         return $this->discontinued;
     }
 
-    public function checkMinCost(): bool
+    public function isMinCost(): bool
     {
         return $this->cost < self::MIN_COST;
     }
 
-    public function checkMaxCost(): bool
+    public function isMaxCost(): bool
     {
         return $this->cost > self::MAX_COST;
     }
 
-    public function checkStock(): bool
+    public function isMinStock(): bool
     {
         return $this->stock < self::MIN_COST;
     }
