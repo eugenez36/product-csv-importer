@@ -31,7 +31,9 @@ class ImportLoggerResultTest extends TestCase
 
         $this->assertEquals(4, $logger->getTotal());
         $this->assertEquals(2, $logger->getSuccess());
-        $this->assertEquals($this->failedRow1, $logger->getFailedRows()[0]);
-        $this->assertEquals($this->failedRow2, $logger->getFailedRows()[1]);
+        $this->assertIsArray($logger->getFailedRows()[$this->failedRow1['line']]);
+        $this->assertEquals($this->failedRow1['reason'], $logger->getFailedRows()[$this->failedRow1['line']][0]);
+        $this->assertIsArray($logger->getFailedRows()[$this->failedRow2['line']]);
+        $this->assertEquals($this->failedRow2['reason'], $logger->getFailedRows()[$this->failedRow2['line']][0]);
     }
 }

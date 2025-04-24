@@ -35,7 +35,7 @@ class ProductImporter extends CSVConstants
         $product->setStmTimestamp(new DateTime());
 
         if ($dto->getDiscontinued()) {
-            $product->setDtmDiscontinued(new DateTime);
+            $product->markDiscontinued();
         }
 
         if (!$testMode) {

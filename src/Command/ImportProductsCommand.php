@@ -33,8 +33,6 @@ class ImportProductsCommand extends Command
     const fileArgument = 'file';
     const testOption = 'test';
 
-//    private readonly ScvReaderService $scvReaderService;
-
     public function __construct(
         CSVFileValidator $fileValidator,
         CSVReader        $csvReader,
@@ -79,7 +77,6 @@ class ImportProductsCommand extends Command
 
                 try {
                     $item = $this->rowValidator->validateRow($headers, $row);
-//                    print_r($item);
                     if (count($item['errors']) === 0) {
                         $productDTO = new ProductDTO($item['data'][0], $item['data'][1], $item['data'][2], $item['data'][3], $item['data'][4], (bool)$item['data'][5]);
                         if ($productDTO->isValid()) {
@@ -98,11 +95,13 @@ class ImportProductsCommand extends Command
                     $result->addFailedRow($line, $dataException->getMessage());
                 }
             }
+
+            $io->success('Import successfully completed');
             $this->importLogger->LogImportResult($result);
 
             return Command::SUCCESS;
         } catch (InvalidFileException $invalidFileException) {
-            $output->writeln($invalidFileException->getMessage());
+            $io->error(['Import aborted', $invalidFileException->getMessage()]);
             return Command::FAILURE;
         }
     }

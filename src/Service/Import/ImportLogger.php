@@ -19,7 +19,7 @@ class ImportLogger
             foreach ($importResult->getFailedRows() as $line => $failed) {
                 $reasonList = '';
                 foreach ($failed as $reason) {
-                    $reasonList .= " | " . $reason;
+                    $reasonList .= "| " . $reason;
                 }
                 $output .= sprintf(" - Line [%d]: %s |\n", $line, $reasonList);
             }
