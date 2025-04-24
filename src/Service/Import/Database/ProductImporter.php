@@ -2,10 +2,10 @@
 
 namespace App\Service\Import\Database;
 
-use App\Entity\DTO\ProductDTO;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use App\Service\Import\CSV\CSVConstants;
+use App\Service\Import\DTO\ProductDTO;
 use App\Service\Import\ImportResult;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;

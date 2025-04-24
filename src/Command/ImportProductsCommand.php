@@ -2,13 +2,13 @@
 
 namespace App\Command;
 
-use App\Entity\DTO\ProductDTO;
+use App\Exception\InvalidDataException;
+use App\Exception\InvalidFileException;
 use App\Service\Import\CSV\CSVFileValidator;
 use App\Service\Import\CSV\CSVReader;
 use App\Service\Import\CSV\CSVRowValidator;
 use App\Service\Import\Database\ProductImporter;
-use App\Service\Import\Exception\InvalidDataException;
-use App\Service\Import\Exception\InvalidFileException;
+use App\Service\Import\DTO\ProductDTO;
 use App\Service\Import\ImportLogger;
 use App\Service\Import\ImportResult;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -23,7 +23,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'app:import-product',
     description: 'Import products from a CSV file',
 )]
-class ImportProductCommand extends Command
+class ImportProductsCommand extends Command
 {
     private CSVFileValidator $fileValidator;
     private CSVReader $csvReader;

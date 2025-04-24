@@ -3,8 +3,7 @@
 namespace App\Service\Import\CSV;
 
 
-use App\Service\Import\Exception\InvalidFileException;
-use Symfony\Component\Validator\Constraints\FileValidator;
+use App\Exception\InvalidFileException;
 
 class CSVFileValidator extends CSVConstants
 {
