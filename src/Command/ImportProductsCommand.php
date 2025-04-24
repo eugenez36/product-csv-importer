@@ -79,11 +79,11 @@ class ImportProductsCommand extends Command
 
                 try {
                     $item = $this->rowValidator->validateRow($headers, $row);
+//                    print_r($item);
                     if (count($item['errors']) === 0) {
                         $productDTO = new ProductDTO($item['data'][0], $item['data'][1], $item['data'][2], $item['data'][3], $item['data'][4], (bool)$item['data'][5]);
                         if ($productDTO->isValid()) {
                             $this->productImporter->importProduct($productDTO, $result, $testMode);
-//                            $result->incrementSuccessful();
                         } else {
                             foreach ($productDTO->getFailedRules() as $rule) {
                                 $result->addFailedRow($line, $rule);
@@ -98,7 +98,6 @@ class ImportProductsCommand extends Command
                     $result->addFailedRow($line, $dataException->getMessage());
                 }
             }
-
             $this->importLogger->LogImportResult($result);
 
             return Command::SUCCESS;

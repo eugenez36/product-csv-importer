@@ -20,10 +20,7 @@ class ImportResult
 
     public function addFailedRow(int $line, string $reason): void
     {
-        $this->failed[] = [
-            'line' => $line,
-            'reason' => $reason,
-        ];
+        $this->failed[$line][] = $reason;
     }
 
     public function getTotal(): int

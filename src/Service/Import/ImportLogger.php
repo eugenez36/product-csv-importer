@@ -16,8 +16,12 @@ class ImportLogger
 
         if (!empty($importResult->getFailedRows())) {
             $output .= "Failed rows:\n";
-            foreach ($importResult->getFailedRows() as $failed) {
-                $output .= sprintf(" - Line [%d]: %s\n", $failed['line'], $failed['reason']);
+            foreach ($importResult->getFailedRows() as $line => $failed) {
+                $reasonList = '';
+                foreach ($failed as $reason) {
+                    $reasonList .= " | " . $reason;
+                }
+                $output .= sprintf(" - Line [%d]: %s |\n", $line, $reasonList);
             }
         }
 
