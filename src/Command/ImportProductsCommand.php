@@ -73,8 +73,6 @@ class ImportProductsCommand extends Command
             $headers = $this->getHeaders($filePath);
 
             foreach ($this->csvReader->readFile($filePath) as $line => $row) {
-                $result->incrementTotal();
-
                 try {
                     $item = $this->rowValidator->validateRow($headers, $row);
                     if (count($item['errors']) === 0) {

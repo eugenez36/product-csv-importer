@@ -8,7 +8,7 @@ class ImportResult
     private int $success = 0;
     private array $failed = [];
 
-    public function incrementTotal(): void
+    private function incrementTotal(): void
     {
         $this->total++;
     }
@@ -16,10 +16,15 @@ class ImportResult
     public function incrementSuccessful(): void
     {
         $this->success++;
+        $this->incrementTotal();
     }
 
     public function addFailedRow(int $line, string $reason): void
     {
+        //If there is no such line, then plus, if there is, add only the error
+        if (!isset($this->failed[$line])) {
+            $this->incrementTotal();
+        }
         $this->failed[$line][] = $reason;
     }
 

@@ -20,10 +20,6 @@ class ImportResultTest extends TestCase
     public function testImportLoggerResultWithData(): void
     {
         $logger = new ImportResult();
-        $logger->incrementTotal();
-        $logger->incrementTotal();
-        $logger->incrementTotal();
-        $logger->incrementTotal();
         $logger->incrementSuccessful();
         $logger->incrementSuccessful();
         $logger->addFailedRow($this->failedRow1['line'], $this->failedRow1['reason']);
