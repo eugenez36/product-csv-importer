@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-    
+
 permissions:
   contents: read
 
@@ -18,30 +18,47 @@ jobs:
   symfony-tests:
     name: Run tests
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0.41
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+        options: --health-cmd:"mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-      #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
-      # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           extensions: mbstring, xml, curl, intl, json, pdo, mysql, zip
           coverage: pcov
-          
+
       - name: Cache composer packages
         uses: actions/cache@v3
-        with: 
+        with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
 
+      - name: Validate composer.json
+        run: composer validate
+
       - name: Install dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-progress --prefer-dist
+
+      - name: Prepare test environment
+        run: echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/test_db" >> .env.test.local
+
+      - name: Create database schema
+        run: php bon/console doctrine:schema:create --env=test --no-interaction
 
       - name: Run PHPUnit tests
-        run: php vendor/bin/phpunit
-
+        run: php bin/phpunit
