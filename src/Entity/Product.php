@@ -19,7 +19,7 @@ class Product
     #[ORM\Column(length: 50, nullable: false)]
     private ?string $strProductName = null;
 
-    #[ORM\Column(length: 255,nullable: false)]
+    #[ORM\Column(length: 255, nullable: false)]
     private ?string $strProductDesc = null;
 
     #[ORM\Column(length: 10, nullable: false)]

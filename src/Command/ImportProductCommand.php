@@ -2,6 +2,15 @@
 
 namespace App\Command;
 
+use App\Entity\DTO\ProductDTO;
+use App\Service\Import\CSV\CSVFileValidator;
+use App\Service\Import\CSV\CSVReader;
+use App\Service\Import\CSV\CSVRowValidator;
+use App\Service\Import\Database\ProductImporter;
+use App\Service\Import\Exception\InvalidDataException;
+use App\Service\Import\Exception\InvalidFileException;
+use App\Service\Import\ImportLogger;
+use App\Service\Import\ImportResult;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,39 +20,100 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'ImportProduct',
-    description: 'Add a short description for your command',
+    name: 'app:import-product',
+    description: 'Import products from a CSV file',
 )]
 class ImportProductCommand extends Command
 {
-    public function __construct()
+    private CSVFileValidator $fileValidator;
+    private CSVReader $csvReader;
+    private CSVRowValidator $rowValidator;
+    private ProductImporter $productImporter;
+    private ImportLogger $importLogger;
+    const fileArgument = 'file';
+    const testOption = 'test';
+
+//    private readonly ScvReaderService $scvReaderService;
+
+    public function __construct(
+        CSVFileValidator $fileValidator,
+        CSVReader        $csvReader,
+        CSVRowValidator  $rowValidator,
+        ProductImporter  $productImporter,
+        ImportLogger     $importLogger,
+    )
     {
         parent::__construct();
+        $this->fileValidator = $fileValidator;
+        $this->csvReader = $csvReader;
+        $this->rowValidator = $rowValidator;
+        $this->productImporter = $productImporter;
+        $this->importLogger = $importLogger;
     }
 
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+            ->addArgument(self::fileArgument, InputArgument::REQUIRED, 'Csv file path')
+            ->addOption(self::testOption, 't', InputOption::VALUE_NONE, 'Run in test mode');
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $arg1 = $input->getArgument('arg1');
+        $filePath = $input->getArgument(self::fileArgument);
+        $testMode = $input->getOption(self::testOption);
 
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        $result = new ImportResult();
+
+        try {
+            $this->fileValidator->validateFile($filePath);
+
+            $headers = $this->getHeaders($filePath);
+
+            foreach ($this->csvReader->readFile($filePath) as $line => $row) {
+                $result->incrementTotal();
+
+                try {
+                    $item = $this->rowValidator->validateRow($headers, $row);
+                    if (count($item['errors']) === 0) {
+                        $productDTO = new ProductDTO($item['data'][0], $item['data'][1], $item['data'][2], $item['data'][3], $item['data'][4], (bool)$item['data'][5]);
+                        if ($productDTO->isValid()) {
+                            $this->productImporter->importProduct($productDTO, $result, $testMode);
+//                            $result->incrementSuccessful();
+                        } else {
+                            foreach ($productDTO->getFailedRules() as $rule) {
+                                $result->addFailedRow($line, $rule);
+                            }
+                        }
+                    } else {
+                        foreach ($item['errors'] as $error) {
+                            $result->addFailedRow($line, $error);
+                        }
+                    }
+                } catch (InvalidDataException $dataException) {
+                    $result->addFailedRow($line, $dataException->getMessage());
+                }
+            }
+
+            $this->importLogger->LogImportResult($result);
+
+            return Command::SUCCESS;
+        } catch (InvalidFileException $invalidFileException) {
+            $output->writeln($invalidFileException->getMessage());
+            return Command::FAILURE;
         }
+    }
 
-        if ($input->getOption('option1')) {
-            // ...
-        }
+    private function getHeaders(string $filePath): array
+    {
+        $handle = fopen($filePath, 'r');
+        $headers = fgetcsv($handle);
+        fclose($handle);
 
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
-
-        return Command::SUCCESS;
+        return $headers;
     }
 }

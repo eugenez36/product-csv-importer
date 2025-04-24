@@ -21,14 +21,14 @@ final class Version20250422130316 extends AbstractMigration
     {
         $this->addSql(<<<'SQL'
             CREATE TABLE product (
-                intProductDataId INT UNSIGNED AUTO_INCREMENT NOT NULL,
-                strProductName VARCHAR(50) NOT NULL,
-                strProductDesc VARCHAR(255) NOT NULL,
-                strProductCode VARCHAR(10) NOT NULL,
-                dtmAdded DATETIME DEFAULT NULL,
-                dtmDiscontinued DATETIME DEFAULT NULL,
-                stmTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                PRIMARY KEY(intProductDataId))
+                int_product_data_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                str_product_name VARCHAR(50) NOT NULL,
+                str_product_desc VARCHAR(255) NOT NULL,
+                str_product_code VARCHAR(10) NOT NULL,
+                dtm_added DATETIME DEFAULT NULL,
+                dtm_discontinued DATETIME DEFAULT NULL,
+                stm_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY(int_product_data_id))
                 DEFAULT CHARACTER SET latin1 ENGINE = InnoDB
         SQL);
     }
