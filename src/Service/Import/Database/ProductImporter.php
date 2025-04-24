@@ -26,6 +26,7 @@ class ProductImporter extends CSVConstants
 
     public function importProduct(ProductDTO $dto, ImportResult $result, bool $testMode): void
     {
+        //Update if the product already exists or create a new one
         $product = $this->productRepository->findOneBy(['strProductCode' => $dto->getCode()]) ?? new Product();
 
         $product->setStrProductCode($dto->getCode());
@@ -38,6 +39,7 @@ class ProductImporter extends CSVConstants
             $product->markDiscontinued();
         }
 
+        // If test mode is true without DB changes
         if (!$testMode) {
             $this->em->persist($product);
             $this->em->flush();
