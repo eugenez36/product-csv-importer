@@ -52,7 +52,7 @@ jobs:
         run: composer validate
 
       - name: Install dependencies
-        run: composer install --no-ansi --no-interaction --no-progress --prefer-dist
+        run: composer install --no-ansi --no-scripts --no-interaction --no-progress --prefer-dist
 
       - name: Prepare test environment
         run: echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/test_db" >> .env.test.local
