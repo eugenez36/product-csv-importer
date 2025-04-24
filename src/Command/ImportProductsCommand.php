@@ -10,8 +10,10 @@ use App\Service\Import\CSV\CSVReader;
 use App\Service\Import\CSV\CSVRowValidator;
 use App\Service\Import\Database\ProductImporter;
 use App\Service\Import\DTO\ProductDTO;
+use App\Service\Import\ImportHistoryLogger;
 use App\Service\Import\ImportLogger;
 use App\Service\Import\ImportResult;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,15 +33,17 @@ class ImportProductsCommand extends Command
     private CSVRowValidator $rowValidator;
     private ProductImporter $productImporter;
     private ImportLogger $importLogger;
+    private ImportHistoryLogger $fileLogger;
     const fileArgument = 'file';
     const testOption = 'test';
 
     public function __construct(
-        CSVFileValidator $fileValidator,
-        CSVReader        $csvReader,
-        CSVRowValidator  $rowValidator,
-        ProductImporter  $productImporter,
-        ImportLogger     $importLogger,
+        CSVFileValidator    $fileValidator,
+        CSVReader           $csvReader,
+        CSVRowValidator     $rowValidator,
+        ProductImporter     $productImporter,
+        ImportLogger        $importLogger,
+        ImportHistoryLogger $fileLogger,
     )
     {
         parent::__construct();
@@ -48,6 +52,7 @@ class ImportProductsCommand extends Command
         $this->rowValidator = $rowValidator;
         $this->productImporter = $productImporter;
         $this->importLogger = $importLogger;
+        $this->fileLogger = $fileLogger;
     }
 
     protected function configure(): void
@@ -83,11 +88,12 @@ class ImportProductsCommand extends Command
                             $item['data'][CSVConstants::PRODUCT_DESCRIPTION_HEADER],
                             $item['data'][CSVConstants::PRODUCT_QUANTITY_HEADER],
                             $item['data'][CSVConstants::PRODUCT_PRICE_HEADER],
-                            (bool)$item['data'][CSVConstants::PRODUCT_DISCONTINUED_HEADER]
+                            $item['data'][CSVConstants::PRODUCT_DISCONTINUED_HEADER]
                         );
                         if ($productDTO->isValid()) {
                             $this->productImporter->importProduct($productDTO, $result, $testMode);
                         } else {
+                            $this->fileLogger->log(LogLevel::WARNING, 'Product rules are not enforced', $productDTO->toArray());
                             foreach ($productDTO->getFailedRules() as $rule) {
                                 $result->addFailedRow($line, $rule);
                             }
@@ -95,6 +101,7 @@ class ImportProductsCommand extends Command
                     } else {
                         foreach ($item['errors'] as $error) {
                             $result->addFailedRow($line, $error);
+                            $this->fileLogger->log(LogLevel::WARNING, 'Row is not valid', $item);
                         }
                     }
                 } catch (InvalidDataException $dataException) {

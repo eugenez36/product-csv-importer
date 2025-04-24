@@ -106,4 +106,17 @@ class ProductDTO
     {
         return count($this->failedRules) === 0;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'code' => $this->code,
+            'name' => $this->name,
+            'description' => $this->description,
+            'stock' => $this->stock,
+            'cost' => $this->cost,
+            'discontinued' => $this->discontinued,
+            'failedRules' => $this->failedRules,
+        ];
+    }
 }

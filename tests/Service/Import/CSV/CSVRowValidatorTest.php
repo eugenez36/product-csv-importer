@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\CSV;
+namespace App\Tests\Service\Import\CSV;
 
 use App\Service\Import\CSV\CSVConstants;
 use App\Service\Import\CSV\CSVRowValidator;
