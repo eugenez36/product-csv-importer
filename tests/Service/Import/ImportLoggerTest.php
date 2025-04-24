@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service;
+namespace App\Tests\Service\Import;
 
 use App\Service\Import\ImportLogger;
 use App\Service\Import\ImportResult;

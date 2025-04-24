@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\DTO;
+namespace App\Tests\Service\Import\DTO;
 
 use App\Service\Import\DTO\ProductDTO;
 use PHPUnit\Framework\TestCase;

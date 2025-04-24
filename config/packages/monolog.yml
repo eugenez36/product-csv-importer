@@ -1,0 +1,10 @@
+monolog:
+  channels: ['product_import']
+  handlers:
+      product_import:
+          type: rotating_file
+          path: '%kernel.logs_dir%/imports/product_import.log'
+          level: debug
+          max_files: 5
+          channels: ['product_imports']
+          formatter: monolog.formatter.json

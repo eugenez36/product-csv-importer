@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\CSV;
+namespace App\Tests\Service\Import\CSV;
 
 use App\Service\Import\CSV\CSVConstants;
 use App\Service\Import\CSV\CSVRowValidator;
@@ -10,6 +10,7 @@ class CSVRowValidatorTest extends TestCase
 {
     private CSVRowValidator $validator;
     private array $headers;
+
     protected function setUp(): void
     {
         $this->validator = new CSVRowValidator();
@@ -62,5 +63,17 @@ class CSVRowValidatorTest extends TestCase
         $result = $this->validator->validateRow($this->headers, $row);
 
         $this->assertEquals("Field [" . CSVConstants::PRODUCT_CODE_HEADER . "] empty or null", $result['errors'][0]);
+    }
+
+    public function testValidateRowWithCombineMethod(): void
+    {
+        $row = ['P011', 'TV', 'TV description', '11', '111.111', ''];
+        $result = $this->validator->validateRow($this->headers, $row);
+
+        $this->assertArrayHasKey(CSVConstants::PRODUCT_CODE_HEADER, $result['data']);
+        $this->assertArrayHasKey(CSVConstants::PRODUCT_NAME_HEADER, $result['data']);
+        $this->assertArrayHasKey(CSVConstants::PRODUCT_DESCRIPTION_HEADER, $result['data']);
+        $this->assertArrayHasKey(CSVConstants::PRODUCT_QUANTITY_HEADER, $result['data']);
+        $this->assertArrayHasKey(CSVConstants::PRODUCT_CODE_HEADER, $result['data']);
     }
 }
