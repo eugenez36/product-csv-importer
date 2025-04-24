@@ -1,5 +1,7 @@
 {
     "type": "project",
+    "name": "wolf-ram/product-csv-importer",
+    "description": "Symfony CSV product importer solution",
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -15,7 +17,7 @@
         "symfony/dotenv": "6.4.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.4.*",
-        "symfony/runtime": "7.1.7.0",
+        "symfony/runtime": "7.1.*",
         "symfony/validator": "6.4.*",
         "symfony/yaml": "6.4.*"
     },
