@@ -58,7 +58,7 @@ jobs:
         run: echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/test_db" >> .env.test.local
 
       - name: Create database schema
-        run: php bon/console doctrine:schema:create --env=test --no-interaction
+        run: php bin/console doctrine:schema:create --env=test --no-interaction
 
       - name: Run PHPUnit tests
         run: php bin/phpunit
