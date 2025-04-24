@@ -96,8 +96,10 @@ class ImportProductsCommand extends Command
                 }
             }
 
-            $io->success('Import successfully completed');
-            $this->importLogger->LogImportResult($result);
+            $io->success($this->importLogger->generateTotalHeaderString($result));
+            if (count($result->getFailedRows()) !== 0) {
+                $io->warning($this->importLogger->generateFailedRow($result));
+            }
 
             return Command::SUCCESS;
         } catch (InvalidFileException $invalidFileException) {

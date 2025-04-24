@@ -5,7 +5,7 @@ namespace App\Tests\Service;
 use App\Service\Import\ImportResult;
 use PHPUnit\Framework\TestCase;
 
-class ImportLoggerResultTest extends TestCase
+class ImportResultTest extends TestCase
 {
     private array $failedRow1 = [
         'line' => 1,
