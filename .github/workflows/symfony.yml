@@ -69,4 +69,4 @@ jobs:
           version: 9.6
           php_version: 8.3
           configuration: phpunit.xml
-          testsuit: unittest
+          testsuite: unittest
